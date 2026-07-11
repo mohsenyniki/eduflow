@@ -12,6 +12,7 @@
 volumes:
   postgres_data:
   localstack_data:
+  airflow_logs:
 
 services:
 
@@ -176,8 +177,12 @@ services:
       AIRFLOW__CORE__LOAD_EXAMPLES: 'false'
       _PIP_ADDITIONAL_REQUIREMENTS: "confluent-kafka==2.3.0 pandas==2.2.2 pyarrow==16.0.0 boto3==1.34.0"
       AIRFLOW__WEBSERVER__SECRET_KEY: 'eduflow-secret-key-2026'
+      AIRFLOW__LOGGING__BASE_LOG_FOLDER: '/opt/airflow/logs'
+      AIRFLOW__LOGGING__REMOTE_LOGGING: 'false'
+      KAFKA_BOOTSTRAP_SERVERS: kafka:29092
     volumes:
       - ./airflow/dags:/opt/airflow/dags
+      - airflow_logs:/opt/airflow/logs
     ports:
       - "8080:8080"
     command: webserver
@@ -211,8 +216,12 @@ services:
       AIRFLOW__CORE__LOAD_EXAMPLES: 'false'
       _PIP_ADDITIONAL_REQUIREMENTS: "confluent-kafka==2.3.0 pandas==2.2.2 pyarrow==16.0.0 boto3==1.34.0"
       AIRFLOW__WEBSERVER__SECRET_KEY: 'eduflow-secret-key-2026'
+      AIRFLOW__LOGGING__BASE_LOG_FOLDER: '/opt/airflow/logs'
+      AIRFLOW__LOGGING__REMOTE_LOGGING: 'false'
+      KAFKA_BOOTSTRAP_SERVERS: kafka:29092
     volumes:
       - ./airflow/dags:/opt/airflow/dags
+      - airflow_logs:/opt/airflow/logs
     command: scheduler
     healthcheck:
       test: ["CMD-SHELL", "airflow jobs check --job-type SchedulerJob --hostname $(hostname) | grep -q 'Found one alive job' || exit 1"]
@@ -243,8 +252,13 @@ services:
       AIRFLOW__CORE__LOAD_EXAMPLES: 'false'
       _PIP_ADDITIONAL_REQUIREMENTS: "confluent-kafka==2.3.0 pandas==2.2.2 pyarrow==16.0.0 boto3==1.34.0"
       AIRFLOW__WEBSERVER__SECRET_KEY: 'eduflow-secret-key-2026'
+      AIRFLOW__LOGGING__BASE_LOG_FOLDER: '/opt/airflow/logs'
+      AIRFLOW__LOGGING__REMOTE_LOGGING: 'false'
+      KAFKA_BOOTSTRAP_SERVERS: kafka:29092
+
     volumes:
       - ./airflow/dags:/opt/airflow/dags
+      - airflow_logs:/opt/airflow/logs
     command: celery worker
     healthcheck:
       test: ["CMD-SHELL", "celery --app airflow.executors.celery_executor.app inspect ping | grep -q 'pong' || exit 1"]
@@ -252,5 +266,6 @@ services:
       timeout: 10s
       retries: 5
       start_period: 30s
+
     
   
