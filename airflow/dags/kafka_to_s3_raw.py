@@ -7,7 +7,7 @@ def kafka_to_s3_raw():
     @task
     def consume_kafka() -> list:
         # read events from kafka topics
-        # return them as a list
+        # return them as a json list
 
         from confluent_kafka import Consumer, KafkaError
         import json
