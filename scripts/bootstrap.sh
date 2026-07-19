@@ -110,7 +110,11 @@ if [ "$NEEDS_REPOPULATE" = true ]; then
     ELAPSED=0
 
     while [ $ELAPSED -lt $MAX_WAIT ]; do
-        STATE=$(docker exec airflow-webserver airflow dags-state kafka_to_s3_raw "$RUN_ID" 2>/dev/null | tail -1 || echo "unknown")
+        STATE=$(docker exec airflow-webserver curl -sf \
+        -u admin:admin \
+        "http://localhost:8080/api/v1/dags/kafka_to_s3_raw/dagRuns/$RUN_ID" \
+        | python3 -c "import sys,json; print(json.load(sys.stdin).get('state','unknown'))" \
+        2>/dev/null || echo "unknown")
         
         if [ "$STATE" = "success" ]; then
             echo "  ✓ DAG completed successfully"
@@ -131,11 +135,42 @@ if [ "$NEEDS_REPOPULATE" = true ]; then
     fi
 fi
 
-# ── 4. ALWAYS RUN SPARK ───────────────────────────────────────────────────────
+# ── 4. ALWAYS TRIGGER SPARK DAG ───────────────────────────────────────────────
 echo ""
-echo "Running Spark transformation job..."
-docker exec -u root spark-master /opt/spark/jobs/submit_transform.sh 2>&1 | grep -E "Processing|Done|Failed"
-echo "  ✓ Spark job completed"
+echo "Triggering Airflow DAG: s3_raw_to_s3_curated..."
+SPARK_RUN_ID="bootstrap_spark_$(date +%Y%m%dT%H%M%S)"
+docker exec airflow-webserver airflow dags trigger s3_raw_to_s3_curated \
+    --run-id "$SPARK_RUN_ID" > /dev/null 2>&1
+echo "  ✓ DAG triggered with run ID: $SPARK_RUN_ID"
+
+echo ""
+echo "Waiting for Spark DAG to complete..."
+MAX_WAIT=300
+ELAPSED=0
+
+while [ $ELAPSED -lt $MAX_WAIT ]; do
+    STATE=$(docker exec airflow-webserver curl -sf \
+    -u admin:admin \
+    "http://localhost:8080/api/v1/dags/s3_raw_to_s3_curated/dagRuns/$SPARK_RUN_ID" \
+    | python3 -c "import sys,json; print(json.load(sys.stdin).get('state','unknown'))" \
+    2>/dev/null || echo "unknown")    
+    if [ "$STATE" = "success" ]; then
+        echo "  ✓ Spark DAG completed successfully"
+        break
+    elif [ "$STATE" = "failed" ]; then
+        echo "  ✗ Spark DAG failed. Check Airflow UI at http://localhost:8080"
+        exit 1
+    fi
+
+    echo "  DAG state: $STATE... waiting ($ELAPSED/${MAX_WAIT}s)"
+    sleep 10
+    ELAPSED=$((ELAPSED + 10))
+done
+
+if [ $ELAPSED -ge $MAX_WAIT ]; then
+    echo "  ✗ Spark DAG did not complete within ${MAX_WAIT}s. Check Airflow UI."
+    exit 1
+fi
 
 echo ""
 CURATED_COUNT=$(docker exec localstack awslocal s3 ls s3://eduflow-curated/ --recursive 2>/dev/null | wc -l | tr -d ' ')

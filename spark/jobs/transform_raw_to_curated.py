@@ -24,6 +24,16 @@ def transform_event_type(spark, event_type, raw_path, curated_path):
     input_path = f"s3a://eduflow-raw/{event_type}/"
     output_path = f"s3a://eduflow-curated/{event_type}/"
     
+    # check if raw files exist before attempting to read
+    try:
+        file_count = spark.read.parquet(input_path).limit(1).count()
+        if file_count == 0:
+            print(f"Skipping {event_type}: no records found")
+            return
+    except Exception:
+        print(f"Skipping {event_type}: no raw files exist yet")
+        return
+    
     # read raw parquet files
     df = spark.read.parquet(input_path)
     
