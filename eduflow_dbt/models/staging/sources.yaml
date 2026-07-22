@@ -1,0 +1,15 @@
+version: 2
+
+sources:
+  - name: staging
+    database: eduflow_warehouse
+    schema: public
+    tables:
+      - name: stg_application_submitted
+      - name: stg_document_submitted
+      - name: stg_visa_status_change
+      - name: stg_enrollment_confirmed
+      - name: stg_term_registration
+      - name: stg_opt_cpt_request
+      - name: stg_status_change
+      - name: stg_graduation
