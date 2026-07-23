@@ -25,9 +25,7 @@ app.add_middleware(
     allow_methods=["GET"],
     allow_headers=["*"],
 )
-
 # ── DATABASE CONNECTION ───────────────────────────────────────────────────────
-
 def get_connection():
     return psycopg2.connect(
         host=os.getenv("WAREHOUSE_HOST", "localhost"),
