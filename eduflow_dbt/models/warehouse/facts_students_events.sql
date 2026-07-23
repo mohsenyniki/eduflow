@@ -8,7 +8,7 @@ with applications as (
         payload_school          as school_name,
         payload_degree_level    as degree_level,
         payload_funding_source  as funding_source,
-        payload_term            as term
+        payload_entry_term            as term
     from {{ source('staging', 'stg_application_submitted') }}
 ),
 

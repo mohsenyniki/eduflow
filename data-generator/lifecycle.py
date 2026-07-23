@@ -57,13 +57,18 @@ def generate_student_events(student: Student) -> List[StudentEvent]:
             event_type=EventType.APPLICATION_SUBMITTED,
             student_id=student.student_id,
             event_timestamp=_to_dt(app_date),
-            payload={
+            payload = {
                 "program": student.program,
                 "school": student.school,
-                "term": student.entry_term,
                 "degree_level": student.degree_level,
+                "entry_term": student.entry_term,
                 "funding_source": student.funding_source,
-            },
+                "full_name": student.full_name,
+                "date_of_birth": str(student.date_of_birth),
+                "gender": student.gender,
+                "country_of_origin": student.country_of_origin,
+                "visa_type": student.visa_type,
+            }
         )
     )
 

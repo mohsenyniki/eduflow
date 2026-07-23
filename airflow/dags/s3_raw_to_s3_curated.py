@@ -2,6 +2,7 @@ from airflow.decorators import dag, task
 from airflow.operators.bash import BashOperator
 from datetime import datetime
 from airflow.providers.apache.spark.operators.spark_submit import SparkSubmitOperator
+from airflow.operators.trigger_dagrun import TriggerDagRunOperator
 
 
 @dag(
@@ -27,6 +28,12 @@ def s3_raw_to_s3_curated():
         }
     )
 
-    transform
+    trigger_warehouse = TriggerDagRunOperator(
+            task_id="trigger_warehouse_load",
+            trigger_dag_id="s3_curated_to_warehouse",
+            wait_for_completion=False
+    )
+
+    transform >> trigger_warehouse
 
 s3_raw_to_s3_curated_dag = s3_raw_to_s3_curated()

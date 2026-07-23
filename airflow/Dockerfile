@@ -23,3 +23,21 @@ USER airflow
 
 ENV PATH=$PATH:${SPARK_HOME}/bin
 ENV JAVA_HOME=/usr/lib/jvm/default-java
+
+# install python packages including dbt
+# doing this in the dockerfile means it only installs once during build
+# not on every container restart like _PIP_ADDITIONAL_REQUIREMENTS does
+# install airflow providers and data packages first
+RUN pip install --no-cache-dir \
+    confluent-kafka==2.3.0 \
+    pandas==2.2.2 \
+    pyarrow==16.0.0 \
+    boto3==1.34.0 \
+    sqlalchemy==1.4.52 \
+    psycopg2-binary==2.9.9 \
+    apache-airflow-providers-apache-spark==4.1.3
+
+# install dbt separately to avoid dependency conflicts
+RUN pip install --no-cache-dir \
+    dbt-core==1.8.9 \
+    dbt-postgres==1.8.2

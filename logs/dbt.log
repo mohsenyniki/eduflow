@@ -1,0 +1,49 @@
+==================== 2026-07-22T17:09:22.105496Z | 019f8acd-aa2e-7830-a270-7be7de74bfa6 ====================
+17:09:22.107145 [info ]: Installing dbt project and profile setup
+17:09:22.113901 [info ]: Info Created .vscode/extensions.json with dbt extension recommendation
+17:09:22.115210 [info ]: Success Project created successfully!
+17:09:22.115236 [info ]: Info Project name: jaffle_shop
+17:09:22.115255 [info ]: Info Project directory: jaffle_shop
+17:09:22.115415 [info ]: Info Setting up your profile...
+17:09:22.116328 [info ]: Info Creating new profile...
+17:09:46.695625 [info ]: No dbt_cloud.yml found - proceeding without cloud pre-population
+17:11:24.566089 [info ]: Success Profile written to /Users/nikimohseny/.dbt/profiles.yml
+17:11:24.567452 [info ]: Validating profile inputs, adapters, and connection
+
+17:11:24.567944 [info ]: dbt-core 2.0.0-alpha.5
+17:11:24.571796 [info ]: Started loading project
+17:11:24.590759 [info ]: Loading ~/.dbt/profiles.yml
+17:11:24.596632 [info ]: Finished loading project [  0.02s]
+17:11:24.597730 [error]: [InvalidConfig (dbt1005)]: Configuration Error: The 'postgres' adapter is not yet supported by dbt Fusion. Supported adapters: snowflake, bigquery, databricks, redshift, duckdb, salesforce, clickhouse. To use an experimental adapter, set the environment variable DBT_ALLOW_EXPERIMENTAL_ADAPTERS=true. Note that experimental adapters may be unstable and are not yet recommended for production use.
+17:11:24.680128 [info ]: 
+==================== Execution Summary =====================
+Finished 'init' with 1 error [2m 3s]
+[0m13:13:48.659879 [debug] [MainThread]: Sending event: {'category': 'dbt', 'action': 'invocation', 'label': 'start', 'context': [<snowplow_tracker.self_describing_json.SelfDescribingJson object at 0x10269a900>, <snowplow_tracker.self_describing_json.SelfDescribingJson object at 0x105b23ed0>, <snowplow_tracker.self_describing_json.SelfDescribingJson object at 0x105b23d90>]}
+
+
+============================== 13:13:48.664221 | b7d7d4ac-a4a3-4a43-831d-b62fa9bb93d3 ==============================
+[0m13:13:48.664221 [info ] [MainThread]: Running with dbt=1.8.9
+[0m13:13:48.664499 [debug] [MainThread]: running dbt with arguments {'printer_width': '80', 'indirect_selection': 'eager', 'write_json': 'True', 'log_cache_events': 'False', 'partial_parse': 'True', 'cache_selected_only': 'False', 'profiles_dir': '/Users/nikimohseny/.dbt', 'version_check': 'True', 'debug': 'False', 'log_path': 'logs', 'fail_fast': 'False', 'warn_error': 'None', 'use_colors': 'True', 'use_experimental_parser': 'False', 'empty': 'None', 'quiet': 'False', 'no_print': 'None', 'log_format': 'default', 'introspect': 'True', 'warn_error_options': 'WarnErrorOptions(include=[], exclude=[])', 'static_parser': 'True', 'target_path': 'None', 'invocation_command': 'dbt init eduflow_dbt', 'send_anonymous_usage_stats': 'True'}
+[0m13:13:48.673087 [debug] [MainThread]: Starter project path: /Library/Frameworks/Python.framework/Versions/3.13/lib/python3.13/site-packages/dbt/include/starter_project
+[0m13:13:48.676431 [info ] [MainThread]: 
+Your new dbt project "eduflow_dbt" was created!
+
+For more information on how to configure the profiles.yml file,
+please consult the dbt documentation here:
+
+  https://docs.getdbt.com/docs/configure-your-profile
+
+One more thing:
+
+Need help? Don't hesitate to reach out to us via GitHub issues or on Slack:
+
+  https://community.getdbt.com/
+
+Happy modeling!
+
+[0m13:13:48.676572 [info ] [MainThread]: Setting up your profile.
+[0m13:14:48.956559 [info ] [MainThread]: Profile eduflow_dbt written to /Users/nikimohseny/.dbt/profiles.yml using target's profile_template.yml and your supplied values. Run 'dbt debug' to validate the connection.
+[0m13:14:48.998582 [debug] [MainThread]: Resource report: {"command_name": "init", "command_success": true, "command_wall_clock_time": 60.373795, "process_in_blocks": "0", "process_kernel_time": 0.133785, "process_mem_max_rss": "100794368", "process_out_blocks": "0", "process_user_time": 0.489387}
+[0m13:14:48.999689 [debug] [MainThread]: Command `dbt init` succeeded at 13:14:48.999490 after 60.38 seconds
+[0m13:14:49.000550 [debug] [MainThread]: Sending event: {'category': 'dbt', 'action': 'invocation', 'label': 'end', 'context': [<snowplow_tracker.self_describing_json.SelfDescribingJson object at 0x105cb4510>, <snowplow_tracker.self_describing_json.SelfDescribingJson object at 0x105c0ac30>, <snowplow_tracker.self_describing_json.SelfDescribingJson object at 0x102b138a0>]}
+[0m13:14:49.001062 [debug] [MainThread]: Flushing usage events

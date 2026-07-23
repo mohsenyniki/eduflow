@@ -1,5 +1,6 @@
 from airflow.decorators import dag, task
 from datetime import datetime, timedelta
+from airflow.operators.trigger_dagrun import TriggerDagRunOperator
 
 @dag(schedule="@hourly", start_date=datetime(2026, 7, 11))
 def kafka_to_s3_raw():
@@ -117,9 +118,14 @@ def kafka_to_s3_raw():
                 Key=key,
                 Body=buffer.getvalue(),
             )
-
+    
+    trigger_spark = TriggerDagRunOperator(
+        task_id="trigger_spark_transformation",
+        trigger_dag_id="s3_raw_to_s3_curated",
+        wait_for_completion=False
+    )
 
     events = consume_kafka()
-    upload_to_s3(events)
+    upload_to_s3(events) >> trigger_spark
 
 kafka_to_s3_raw_dag = kafka_to_s3_raw()

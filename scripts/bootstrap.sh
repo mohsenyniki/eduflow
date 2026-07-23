@@ -176,8 +176,49 @@ echo ""
 CURATED_COUNT=$(docker exec localstack awslocal s3 ls s3://eduflow-curated/ --recursive 2>/dev/null | wc -l | tr -d ' ')
 echo "  ✓ Curated zone has $CURATED_COUNT files"
 
+# ── 5. ALWAYS TRIGGER DAG 3 (WAREHOUSE LOAD) ─────────────────────────────────
+# Loads curated parquet files into postgresql staging tables
+# then runs dbt to build the star schema warehouse tables.
 
-# ── 5. DONE ───────────────────────────────────────────────────────────────────
+echo ""
+echo "Triggering Airflow DAG: s3_curated_to_warehouse..."
+WAREHOUSE_RUN_ID="bootstrap_warehouse_$(date +%Y%m%dT%H%M%S)"
+docker exec airflow-webserver airflow dags trigger s3_curated_to_warehouse \
+    --run-id "$WAREHOUSE_RUN_ID" > /dev/null 2>&1
+echo "  ✓ DAG 3 triggered with run ID: $WAREHOUSE_RUN_ID"
+
+echo ""
+echo "Waiting for DAG 3 (warehouse load) to complete..."
+MAX_WAIT=300
+ELAPSED=0
+
+while [ $ELAPSED -lt $MAX_WAIT ]; do
+    STATE=$(docker exec airflow-webserver curl -sf \
+        -u admin:admin \
+        "http://localhost:8080/api/v1/dags/s3_curated_to_warehouse/dagRuns/$WAREHOUSE_RUN_ID" \
+        | python3 -c "import sys,json; print(json.load(sys.stdin).get('state','unknown'))" \
+        2>/dev/null || echo "unknown")
+
+    if [ "$STATE" = "success" ]; then
+        echo "  ✓ DAG 3 completed successfully"
+        break
+    elif [ "$STATE" = "failed" ]; then
+        echo "  ✗ DAG 3 failed. Check Airflow UI at http://localhost:8080"
+        exit 1
+    fi
+
+    echo "  DAG state: $STATE... waiting ($ELAPSED/${MAX_WAIT}s)"
+    sleep 10
+    ELAPSED=$((ELAPSED + 10))
+done
+
+if [ $ELAPSED -ge $MAX_WAIT ]; then
+    echo "  ✗ DAG 3 did not complete within ${MAX_WAIT}s. Check Airflow UI."
+    exit 1
+fi
+
+
+# ── 6. DONE ───────────────────────────────────────────────────────────────────
 echo ""
 echo "=========================================="
 echo " Bootstrap complete. Pipeline is ready."
