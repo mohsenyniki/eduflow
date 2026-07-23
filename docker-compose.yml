@@ -269,6 +269,7 @@ services:
       AIRFLOW__LOGGING__BASE_LOG_FOLDER: '/opt/airflow/logs'
       AIRFLOW__LOGGING__REMOTE_LOGGING: 'false'
       KAFKA_BOOTSTRAP_SERVERS: kafka:29092
+      DBT_DB_HOST: postgres
 
     volumes:
       - ./airflow/dags:/opt/airflow/dags

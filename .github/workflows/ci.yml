@@ -48,6 +48,20 @@ jobs:
   dbt-validate:
     name: Validate dbt models
     runs-on: ubuntu-latest
+    services:
+      postgres:
+        image: postgres:15
+        env:
+          POSTGRES_USER: airflow
+          POSTGRES_PASSWORD: airflow
+          POSTGRES_DB: eduflow_warehouse
+        options: >-
+          --health-cmd pg_isready
+          --health-interval 10s
+          --health-timeout 5s
+          --health-retries 5
+        ports:
+          - 5432:5432
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
@@ -55,12 +69,33 @@ jobs:
         uses: actions/setup-python@v5
         with:
           python-version: "3.11"
-      - name: Install dbt 
+      - name: Install dbt
         run: pip install "dbt-core==1.8.9" "dbt-postgres==1.8.2"
-      - name: Validate dbt models compile
+      - name: Create CI profiles.yml
+        run: |
+          cat > eduflow_dbt/profiles.yml << 'EOF'
+          eduflow_dbt:
+            target: dev
+            outputs:
+              dev:
+                type: postgres
+                host: localhost
+                user: airflow
+                password: airflow
+                port: 5432
+                dbname: eduflow_warehouse
+                schema: public
+                threads: 1
+          EOF
+      - name: Load seed data
         run: |
           cd eduflow_dbt
-          dbt compile --profiles-dir . --target dev
-        env:
-          DBT_PROFILES_DIR: .
-          DBT_ALLOW_EXPERIMENTAL_ADAPTERS: "false"
+          dbt seed --profiles-dir .
+      - name: Run dbt models
+        run: |
+          cd eduflow_dbt
+          dbt run --profiles-dir .
+      - name: Run dbt tests
+        run: |
+          cd eduflow_dbt
+          dbt test --profiles-dir .

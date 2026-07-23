@@ -3,7 +3,7 @@ eduflow_dbt:
   outputs:
     dev:
       type: postgres
-      host: postgres
+      host: "{{ env_var('DBT_DB_HOST', 'localhost') }}"
       user: airflow
       password: airflow
       port: 5432
