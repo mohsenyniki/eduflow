@@ -1,0 +1,50 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: eduflow-api
+  namespace: eduflow
+spec:
+  replicas: 2
+  selector:
+    matchLabels:
+      app: eduflow-api
+  template:
+    metadata:
+      labels:
+        app: eduflow-api
+    spec:
+      containers:
+        - name: eduflow-api
+          image: eduflow-api:latest
+          ports:
+            - containerPort: 8000
+          env:
+            - name: WAREHOUSE_HOST
+              value: postgres
+            - name: WAREHOUSE_PORT
+              value: "5432"
+            - name: WAREHOUSE_DB
+              value: eduflow_warehouse
+            - name: WAREHOUSE_USER
+              value: airflow
+            - name: WAREHOUSE_PASSWORD
+              value: airflow
+          resources:
+            requests:
+              memory: "128Mi"
+              cpu: "100m"
+            limits:
+              memory: "256Mi"
+              cpu: "250m"
+          livenessProbe:
+            httpGet:
+              path: /api/metrics
+              port: 8000
+            initialDelaySeconds: 15
+            periodSeconds: 20
+          readinessProbe:
+            httpGet:
+              path: /api/metrics
+              port: 8000
+            initialDelaySeconds: 10
+            periodSeconds: 10
