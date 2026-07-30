@@ -1,0 +1,8 @@
+# Copy this file to terraform.tfvars and fill in your values
+# Never commit terraform.tfvars to git — it contains secrets
+
+aws_region   = "us-east-1"
+project_name = "eduflow"
+environment  = "production"
+db_username  = "airflow"
+db_password  = "your-secure-password-here"
