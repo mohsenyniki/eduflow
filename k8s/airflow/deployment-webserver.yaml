@@ -1,0 +1,55 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: airflow-webserver
+  namespace: eduflow
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: airflow-webserver
+  template:
+    metadata:
+      labels:
+        app: airflow-webserver
+    spec:
+      initContainers:
+        - name: airflow-init
+          image: apache/airflow:2.9.1
+          command:
+            - bash
+            - -c
+            - |
+              airflow db migrate &&
+              airflow users create \
+                --username admin \
+                --password admin \
+                --firstname Admin \
+                --lastname User \
+                --role Admin \
+                --email admin@example.com
+          envFrom:
+            - configMapRef:
+                name: airflow-config
+      containers:
+        - name: airflow-webserver
+          image: apache/airflow:2.9.1
+          command: ["airflow", "webserver"]
+          ports:
+            - containerPort: 8080
+          envFrom:
+            - configMapRef:
+                name: airflow-config
+          resources:
+            requests:
+              memory: "512Mi"
+              cpu: "250m"
+            limits:
+              memory: "1Gi"
+              cpu: "500m"
+          livenessProbe:
+            httpGet:
+              path: /health
+              port: 8080
+            initialDelaySeconds: 60
+            periodSeconds: 30

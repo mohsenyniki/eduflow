@@ -1,0 +1,29 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: airflow-worker
+  namespace: eduflow
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: airflow-worker
+  template:
+    metadata:
+      labels:
+        app: airflow-worker
+    spec:
+      containers:
+        - name: airflow-worker
+          image: apache/airflow:2.9.1
+          command: ["airflow", "celery", "worker"]
+          envFrom:
+            - configMapRef:
+                name: airflow-config
+          resources:
+            requests:
+              memory: "512Mi"
+              cpu: "250m"
+            limits:
+              memory: "1Gi"
+              cpu: "500m"
