@@ -141,7 +141,7 @@ FastAPI serves 10 analytics endpoints. The HTML/JS frontend renders the data as 
 ## Project Structure
 
 ```
-global-student-pipeline/
+eduflow/
 ├── data-generator/          # synthetic event generation
 │   ├── schemas.py           # StudentEvent dataclass, EventType enum
 │   ├── population.py        # Student dataclass, weighted country distributions
@@ -198,8 +198,8 @@ global-student-pipeline/
 ### 1. Clone and start the stack
 
 ```bash
-git clone https://github.com/yourusername/global-student-pipeline.git
-cd global-student-pipeline
+git clone https://github.com/mohsenyniki/eduflow.git
+cd eduflow
 
 docker compose up -d
 ```
@@ -302,4 +302,4 @@ CI runs automatically on every push via GitHub Actions.
 ## Author
 
 **Nikbakht Mohseny** — CS graduate, Indiana University (May 2026)
-AWS Certified Data Engineer · [LinkedIn](www.linkedin.com/in/nikbakht-mohseny-97b2a8295) · [GitHub](https://github.com/mohsenyniki)
+AWS Certified Data Engineer · [LinkedIn](https://www.linkedin.com/in/nikbakht-mohseny-97b2a8295) · [GitHub](https://github.com/mohsenyniki)
