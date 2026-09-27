@@ -6,3 +6,31 @@ docs/CONCEPTS.md
 docs/WEEK2_CONCEPTS.md
 docs/WEEK2_SESSION2_TAKEAWAYS.md
 docs/WEEK2_TAKEAWAYS.md
+
+# Python
+__pycache__/
+*.py[cod]
+.venv/
+venv/
+.pytest_cache/
+
+# Logs & local runtime output
+logs/
+*.log
+
+# Secrets / local env
+.env
+
+# dbt build artifacts
+eduflow_dbt/target/
+eduflow_dbt/dbt_packages/
+
+# Terraform local state
+.terraform/
+*.tfstate
+*.tfstate.backup
+
+# OS / editor
+.DS_Store
+.vscode/
+.idea/
