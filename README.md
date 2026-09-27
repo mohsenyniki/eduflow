@@ -2,7 +2,7 @@
 
 > A production-grade data engineering portfolio project demonstrating end-to-end pipeline design: from synthetic event generation through streaming ingestion, distributed transformation, dimensional modeling, and a live analytics dashboard.
 
-![Dashboard Preview](docs/dashboard-preview.png)
+![Dashboard Preview](docs/dashboard_preview01.png)
 
 ---
 
@@ -301,5 +301,5 @@ CI runs automatically on every push via GitHub Actions.
 
 ## Author
 
-**Nikbakht Mohseny** — CS graduate, Indiana University (May 2026)
+**Nikbakht Mohseny** — CS graduate, Indiana University (July 2026)
 AWS Certified Data Engineer · [LinkedIn](https://www.linkedin.com/in/nikbakht-mohseny-97b2a8295) · [GitHub](https://github.com/mohsenyniki)
